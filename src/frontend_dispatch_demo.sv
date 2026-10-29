@@ -6,6 +6,11 @@ module frontend_dispatch_demo (
     input  logic branch_flush_i,
     output logic [1:0] dispatch_count_o
 );
-    // TODO: emit 0, 1, or 2 valid instructions as an ordered prefix.
-    always_comb dispatch_count_o = '0;
+    // The interface carries an ordered prefix: lane 1 cannot exist without 0.
+    always_comb begin
+        dispatch_count_o = 2'd0;
+        if (!branch_flush_i && fetch_valid_0_i) begin
+            dispatch_count_o = fetch_valid_1_i ? 2'd2 : 2'd1;
+        end
+    end
 endmodule
